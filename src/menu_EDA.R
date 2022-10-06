@@ -11,6 +11,7 @@ menu_data <- read_csv("./data/menu.csv") %>%
 
 # Glimpse data
 glimpse(menu_data)
+menu_data$category
 
 # Create a general report to see if anything jumps out
 create_report(menu_data,
