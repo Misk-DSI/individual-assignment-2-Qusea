@@ -1,0 +1,49 @@
+---
+title: "McDonald's Menu Analysis"
+output: html_document
+date: "2022-10-06"
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "../"
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+menu_data <- read_csv("../data/menu.csv") %>%
+  clean_names()
+```
+
+
+# Data
+
+|variable|description|
+|------|--------------|
+|cholesterol|Measure of cholesterol levels in each item|
+|carbohydrates|Measure of carbohydrate levels in each item|
+|sugars|Measure of sugar levels in each item|
+
+# EDR
+
+```{r, echo=FALSE}
+cholesterol_levels <- menu_data %>%
+  select(category, item, cholesterol) %>%
+  group_by(category)
+
+highest_cholesterol <- cholesterol_levels %>%
+  arrange(desc(cholesterol))%>%
+  head(10) %>% ggplot(aes(cholesterol, reorder(item, cholesterol), fill = item)) +
+  geom_col() +
+  geom_text(aes(label = cholesterol), position=position_stack(vjust=0.5),color="black",size=3) +
+  ggtitle("McDonald's Top 10 Item with Highest Cholesterol Content") +
+  theme(legend.position="none")
+
+highest_cholesterol
+```
+
+# Conclusion
