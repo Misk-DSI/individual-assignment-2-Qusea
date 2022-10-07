@@ -1,0 +1,96 @@
+---
+title: "McDonald's Menu Analysis"
+output: html_document
+date: "2022-10-06"
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "../"
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(here)
+library(janitor)
+menu_data <- read_csv(here("data", "menu.csv")) %>%
+  clean_names()
+```
+
+
+# Data
+
+|variable|description|
+|------|--------------|
+|cholesterol|Measure of cholesterol levels in each item|
+|carbohydrates|Measure of carbohydrate levels in each item|
+|sugars|Measure of sugar levels in each item|
+
+# EDR
+
+## Items with the highest cholesterol
+  I was curious to see what menu items had the highest levels of cholesterol. So I sorted the items according to cholesterol levels, and took the 10 highest values.
+  
+```{r}
+cholesterol_levels <- menu_data %>%
+  select(category, item, cholesterol) %>%
+  group_by(category)
+
+highest_cholesterol <- cholesterol_levels %>%
+  arrange(desc(cholesterol))%>%
+  head(10) %>% ggplot(aes(cholesterol, reorder(item, cholesterol), fill = item)) +
+  geom_col() +
+  geom_text(aes(label = cholesterol), position=position_stack(vjust=0.5),color="black",size=3) +
+  ggtitle("McDonald's Top 10 Item with Highest Cholesterol Content") +
+  theme(legend.position="none")
+
+highest_cholesterol
+```
+
+ As soon as I saw the chart, I noticed that all the highest values belonged to the breakfast category. Which isn't that surprising when you consider that all of these items have eggs in them.
+ 
+## Items with the highest carbohydrates
+
+```{r}
+carbohydrates_levels <- menu_data %>%
+  select(category, item, carbohydrates) %>%
+  group_by(category)
+
+highest_carbohydrates <- carbohydrates_levels %>%
+  arrange(desc(carbohydrates))%>%
+  head(10) %>% ggplot(aes(carbohydrates, reorder(item, carbohydrates), fill = item)) +
+  geom_col()+
+  geom_text(aes(label = carbohydrates), position=position_stack(vjust=0.5),color="black",size=3)+
+  ggtitle("McDonald's Top 10 Item with Highest Carbohydrates Content") +
+  theme(legend.position="none")
+
+highest_carbohydrates
+```
+
+  Looking at the graph above, we observe that milkshakes make a majority of have very high levels of carbohydrates in comparison to drinks from other categories. So we can conclude that milkshakes are a bad choice for a drink while having a meal that is already high in carbohydrates.
+
+## Items with the highest sugar
+
+```{r}
+sugar_levels <- menu_data %>%
+  select(category, item, sugars) %>%
+  group_by(category)
+
+highest_sugar <- sugar_levels %>%
+  arrange(desc(sugars))%>%
+  head(10) %>% ggplot(aes(sugars, reorder(item, sugars), fill = item)) +
+  geom_col()+
+  geom_text(aes(label = sugars), position=position_stack(vjust=0.5),color="black",size=3)+
+  ggtitle("McDonald's Top 10 Item with Highest Sugar Content") +
+  theme(legend.position="none")
+
+highest_sugar
+```
+
+  Surprisingly, the list of items contains more shakes then desserts.
+
+# Conclusion
+
+  In conclusion, stay away from eggs and shakes.
